@@ -49,11 +49,23 @@ module Pronto
     end
 
     def level(hash)
-      same?(hash) ? :error : :warning
+      same?(hash) ? severity_level_identical : severity_level_similar
     end
 
     def same?(hash)
       flay.identical[hash]
+    end
+
+    def severity_level_identical
+      @severity_level_identical ||= begin
+        Pronto::ConfigFile.new.to_h.dig('flay', 'severity_level', 'identical') || :error
+      end.to_sym
+    end
+
+    def severity_level_similar
+      @severity_level_similar ||= begin
+        Pronto::ConfigFile.new.to_h.dig('flay', 'severity_level', 'similar') || :warning
+      end.to_sym
     end
 
     def message(hash)
